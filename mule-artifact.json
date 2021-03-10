@@ -1,0 +1,29 @@
+{
+  "configs": [
+    "Implementation.xml",
+    "Interface.xml",
+    "global-configs.xml",
+    "global-error-handler.xml"
+  ],
+  "secureProperties": ["mule.key", "anypoint.platform.client_id", "anypoint.platform.client_secret"],
+  "redeploymentEnabled": true,
+  "name": "mule4-skeleton-api",
+  "minMuleVersion": "4.1.1",
+  "requiredProduct": "MULE_EE",
+  "classLoaderModelLoaderDescriptor": {
+    "id": "mule",
+    "attributes": {
+      "exportedResources": [
+        "api/.gitignore",
+        "api/api.raml",
+        "api/examples/ping/get-response.json",
+        "api/examples/ping/put-request.json",
+        "api/examples/ping/put-response.json"
+      ]
+    }
+  },
+  "bundleDescriptorLoader": {
+    "id": "mule",
+    "attributes": {}
+  }
+}

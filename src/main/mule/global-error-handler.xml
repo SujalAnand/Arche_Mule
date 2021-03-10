@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:min-log="http://www.mulesoft.org/schema/mule/min-log" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/min-log http://www.mulesoft.org/schema/mule/min-log/current/mule-min-log.xsd">
+
+	<configuration defaultErrorHandler-ref="global-Error-handler" />
+	<error-handler name="global-Error-handler">
+		<on-error-propagate type="APIKIT:BAD_REQUEST, HTTP:BAD_REQUEST, HTTP:CLIENT_SECURITY, HTTP:FORBIDDEN, HTTP:NOT_ACCEPTABLE, HTTP:PARSING, HTTP:SECURITY, HTTP:UNAUTHORIZED">
+			<ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+				xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:name="Building Payload">
+				<ee:message>
+					<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"status": error.muleMessage.attributes.StatusCode default "400" as String,
+	"error" : error.detailedDescription default "Bad Request" as String,
+	"errorType": (error.errorType.namespace default "" as String) ++ ":" ++ (error.errorType.identifier default "" as String),
+	"message" : "Bad Request",
+	"description" : "Error Handled at Global Error Handler"
+}]]></ee:set-payload>
+				</ee:message>
+				<ee:variables>
+					<ee:set-variable variableName="httpStatus"><![CDATA[400
+					]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+			<logger level="INFO" doc:name="Logging Payload" doc:id="91678e7c-5f95-44a9-9203-5362a0e60937" message="#[payload]"/>
+		</on-error-propagate>
+		<on-error-propagate type="APIKIT:NOT_FOUND,HTTP:NOT_FOUND">
+			<ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+				xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:name="Building Payload">
+				<ee:message>
+					<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"status": error.muleMessage.attributes.StatusCode default "404" as String,
+	"error" : error.detailedDescription default "Resources Not Found" as String,
+	"errorType": (error.errorType.namespace default "" as String) ++ ":" ++ (error.errorType.identifier default "" as String),
+	"message" : "Resources Not Found",
+	"description" : "Error Handled at Global Error Handler"
+}]]></ee:set-payload>
+				</ee:message>
+				<ee:variables>
+					<ee:set-variable variableName="httpStatus"><![CDATA[404
+					]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+			<logger level="INFO" doc:name="Logging Payload" doc:id="53c312dc-402e-4568-bd1e-f0f7aec91662" message="#[payload]"/>
+		</on-error-propagate>
+		<on-error-propagate type="APIKIT:METHOD_NOT_ALLOWED, HTTP:METHOD_NOT_ALLOWED">
+			<ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+				xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:name="Building Payload">
+				<ee:message>
+					<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"status": error.muleMessage.attributes.StatusCode default "405" as String,
+	"error" : error.detailedDescription default "Method Not Allowed" as String,
+	"errorType": (error.errorType.namespace default "" as String) ++ ":" ++ (error.errorType.identifier default "" as String),
+	"message" : "Method Not Allowed",
+	"description" : "Error Handled at Global Error Handler"
+}]]></ee:set-payload>
+				</ee:message>
+				<ee:variables>
+					<ee:set-variable variableName="httpStatus"><![CDATA[405
+					]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+			<logger level="INFO" doc:name="Logging Payload" doc:id="bb143616-fbc4-4903-b510-a00fed1ea177" message="#[payload]"/>
+		</on-error-propagate>
+		<on-error-propagate type="APIKIT:NOT_ACCEPTABLE, HTTP:NOT_ACCEPTABLE">
+			<ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+				xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:name="Building Payload">
+				<ee:message>
+					<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"status": error.muleMessage.attributes.StatusCode default "406" as String,
+	"error" : error.detailedDescription default "Not Acceptable" as String,
+	"errorType": (error.errorType.namespace default "" as String) ++ ":" ++ (error.errorType.identifier default "" as String),
+	"description" : "Error Handled at Global Error Handler"
+}]]></ee:set-payload>
+				</ee:message>
+				<ee:variables>
+					<ee:set-variable variableName="httpStatus"><![CDATA[406
+					]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+			<logger level="INFO" doc:name="Logging Payload" doc:id="5fea0a92-1ec6-45ae-926b-9ba1750c28f2" message="#[payload]"/>
+		</on-error-propagate>
+		<on-error-propagate type="APIKIT:UNSUPPORTED_MEDIA_TYPE, HTTP:UNSUPPORTED_MEDIA_TYPE">
+			<ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+				xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:name="Building Payload">
+				<ee:message>
+					<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"status": error.muleMessage.attributes.StatusCode default "415" as String,
+	"error" : error.detailedDescription default "Unsupported Media Type" as String,
+	"errorType": (error.errorType.namespace default "" as String) ++ ":" ++ (error.errorType.identifier default "" as String),
+	"message" : "Unsupported Media Type",
+	"description" : "Error Handled at Global Error Handler"
+}]]></ee:set-payload>
+				</ee:message>
+				<ee:variables>
+					<ee:set-variable variableName="httpStatus"><![CDATA[415
+					]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+			<logger level="INFO" doc:name="Logging Payload" doc:id="ca74cd0d-1789-46e2-ac58-794d3e260b8e" message="#[payload]"/>
+		</on-error-propagate>
+		<on-error-propagate enableNotifications="true"
+			logException="true" doc:name="On Error Propagate" doc:id="e5710c09-811b-42bf-8c20-a1ff5892fd67"
+			type="HTTP:TOO_MANY_REQUESTS">
+			<ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+				xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd 
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd"
+				doc:id="2d82b893-a1ad-44cd-b2ee-3bb0bb2e7b41" doc:name="Building Request">
+				<ee:message>
+					<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"status": error.muleMessage.attributes.StatusCode default "429" as String,
+	"error" : error.detailedDescription default "Too Many Request" as String,
+	"errorType": (error.errorType.namespace default "" as String) ++ ":" ++ (error.errorType.identifier default "" as String),
+	"message" : "Too Many Request",
+	"description" : "Error Handled at Global Error Handler"
+}]]></ee:set-payload>
+				</ee:message>
+				<ee:variables>
+					<ee:set-variable variableName="httpStatus"><![CDATA[429]]></ee:set-variable>
+					<ee:set-variable variableName="httpReason"><![CDATA["Too Many Requests"]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+			<logger level="INFO" doc:name="Logging Payload" doc:id="b387fb7a-8e35-4567-b4e7-124aabed2c0f" message="#[payload]"/>
+		</on-error-propagate>
+		<on-error-propagate type="APIKIT:NOT_IMPLEMENTED">
+			<ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+				xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd 
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:name="Building Payload">
+				<ee:message>
+					<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"status": error.muleMessage.attributes.StatusCode default "501" as String,
+	"error" : error.detailedDescription default "API Not Implemented" as String,
+	"errorType": (error.errorType.namespace default "" as String) ++ ":" ++ (error.errorType.identifier default "" as String),
+	"message" : "API Not Implemented",
+	"description" : "Error Handled at Global Error Handler"
+}]]></ee:set-payload>
+				</ee:message>
+				<ee:variables>
+					<ee:set-variable variableName="httpStatus"><![CDATA[501
+					]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+			<logger level="INFO" doc:name="Logging Payload" doc:id="a27143af-4061-419d-a831-bab6b53ac549" message="#[payload]"/>
+		</on-error-propagate>
+		<on-error-propagate enableNotifications="true"
+			logException="true" doc:name="On Error Propagate" doc:id="e5710c09-811b-42bf-8c20-a1ff5892fd67"
+			type="HTTP:CONNECTIVITY, HTTP:RETRY_EXHAUSTED, HTTP:SERVICE_UNAVAILABLE">
+			<ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+				xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd 
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd"
+				doc:id="2d82b893-a1ad-44cd-b2ee-3bb0bb2e7b41" doc:name="Building Payload">
+				<ee:message>
+					<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"status": error.muleMessage.attributes.StatusCode default "503" as String,
+	"error" : error.detailedDescription default "Service Unavailable" as String,
+	"errorType": (error.errorType.namespace default "" as String) ++ ":" ++ (error.errorType.identifier default "" as String),
+	"message" : "Service Unavailable",
+	"description" : "Error Handled at Global Error Handler"
+}]]></ee:set-payload>
+				</ee:message>
+				<ee:variables>
+					<ee:set-variable variableName="httpStatus"><![CDATA[503]]></ee:set-variable>
+					<ee:set-variable variableName="httpReason"><![CDATA["Service Unavailable"]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+			<logger level="INFO" doc:name="Logging Payload" doc:id="f7a57d17-afc0-4467-9644-439612aa6e5c" message="#[payload]"/>
+		</on-error-propagate>
+		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" type="HTTP:TIMEOUT">
+			<ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+				xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd 
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="2d82b893-a1ad-44cd-b2ee-3bb0bb2e7b41" doc:name="Building Payload">
+				<ee:message>
+					<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"status": error.muleMessage.attributes.StatusCode default 599,
+	"error" : error.detailedDescription default "Time Out" as String,
+	"errorType": (error.errorType.namespace default "" as String) ++ ":" ++ (error.errorType.identifier default "" as String),
+	"message" : "Time Out",
+	"description" : "Error Handled at Global Error Handler"
+}]]></ee:set-payload>
+				</ee:message>
+				<ee:variables>
+					<ee:set-variable variableName="httpStatus"><![CDATA[599]]></ee:set-variable>
+					<ee:set-variable variableName="httpReason" ><![CDATA["Dependent Service Timeout"]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+			<logger level="INFO" doc:name="Logging Payload" doc:id="ad9b7213-b9a7-443a-a668-930954ad9fac" message='#[payload]'/>
+		</on-error-propagate>
+		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="6206daca-6fdd-48de-8555-fe7ee1a43cce" type="ANY">
+			<ee:transform doc:name="Building Payload" doc:id="b2447f8d-4eec-442c-8534-5460065113d6" xsi:schemaLocation="&#10;http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd &#10;http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" >
+				<ee:message >
+					<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+    "data": [],
+    "result": {
+        "success": false,
+		"status": error.muleMessage.attributes.StatusCode default 500,
+		"error" : error.detailedDescription default "Internal Server Error" as String,
+		"errorType": (error.errorType.namespace default "" as String) ++ ":" ++ (error.errorType.identifier default "" as String),
+		"message" : "Error Handled at Global Error Handler"
+		}
+}
+]]></ee:set-payload>
+				</ee:message>
+				<ee:variables >
+					<ee:set-variable variableName="httpStatus" ><![CDATA[599]]></ee:set-variable>
+					<ee:set-variable variableName="httpReason" ><![CDATA["Dependent Service Timeout"]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+			<logger level="INFO" doc:name="Logging Payload" doc:id="a416b98e-591f-4c19-a09f-7c8ed1843e69" message="#[payload]" />
+		</on-error-propagate>
+	</error-handler>
+</mule>
